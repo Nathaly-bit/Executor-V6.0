@@ -1,0 +1,1228 @@
+-- EXECUTOR COMPLETO: V1 + CONFIG + V2 + TEMAS + KEY SYSTEM
+-- By Carsito82
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+----------------------------------------------------------------------
+-- SCREEN GUI
+----------------------------------------------------------------------
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CustomExecutor"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+----------------------------------------------------------------------
+-- SPLASH SCREEN
+----------------------------------------------------------------------
+local splashFrame = Instance.new("Frame")
+splashFrame.Size = UDim2.new(1, 0, 1, 0)
+splashFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+splashFrame.BackgroundTransparency = 0.2
+splashFrame.ZIndex = 100
+splashFrame.Parent = screenGui
+
+local splashBox = Instance.new("Frame")
+splashBox.Size = UDim2.new(0, 360, 0, 140)
+splashBox.Position = UDim2.new(0.5, -180, 0.5, -70)
+splashBox.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+splashBox.BorderSizePixel = 0
+splashBox.ZIndex = 101
+splashBox.Parent = splashFrame
+Instance.new("UICorner", splashBox).CornerRadius = UDim.new(0, 12)
+
+local splashTitle = Instance.new("TextLabel")
+splashTitle.Size = UDim2.new(1, 0, 0, 50)
+splashTitle.Position = UDim2.new(0, 0, 0, 15)
+splashTitle.BackgroundTransparency = 1
+splashTitle.Text = "Custom Script Executor"
+splashTitle.Font = Enum.Font.GothamBold
+splashTitle.TextSize = 24
+splashTitle.TextColor3 = Color3.fromRGB(0, 255, 200)
+splashTitle.ZIndex = 102
+splashTitle.Parent = splashBox
+
+local splashSub = Instance.new("TextLabel")
+splashSub.Size = UDim2.new(1, 0, 0, 40)
+splashSub.Position = UDim2.new(0, 0, 0, 70)
+splashSub.BackgroundTransparency = 1
+splashSub.Text = "By Carsito82"
+splashSub.Font = Enum.Font.Gotham
+splashSub.TextSize = 18
+splashSub.TextColor3 = Color3.fromRGB(255, 255, 255)
+splashSub.ZIndex = 102
+splashSub.Parent = splashBox
+
+task.delay(2, function()
+    local ti = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    TweenService:Create(splashFrame, ti, {BackgroundTransparency = 1}):Play()
+    TweenService:Create(splashBox, ti, {BackgroundTransparency = 1}):Play()
+    TweenService:Create(splashTitle, ti, {TextTransparency = 1}):Play()
+    TweenService:Create(splashSub, ti, {TextTransparency = 1}):Play()
+    task.wait(1.1)
+    splashFrame:Destroy()
+end)
+
+----------------------------------------------------------------------
+-- BOTÓN MINI (AL MINIMIZAR)
+----------------------------------------------------------------------
+local miniButton = Instance.new("TextButton")
+miniButton.Name = "MiniButton"
+miniButton.Size = UDim2.new(0, 120, 0, 32)
+miniButton.Position = UDim2.new(0, 10, 0.8, 0)
+miniButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+miniButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+miniButton.Font = Enum.Font.GothamBold
+miniButton.TextSize = 16
+miniButton.Text = "Executor"
+miniButton.Visible = false
+miniButton.Parent = screenGui
+Instance.new("UICorner", miniButton).CornerRadius = UDim.new(0, 8)
+
+----------------------------------------------------------------------
+-- VENTANA PRINCIPAL
+----------------------------------------------------------------------
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 520, 0, 320)
+mainFrame.Position = UDim2.new(0.5, -260, 0.5, -160)
+mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Parent = screenGui
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 8)
+
+----------------------------------------------------------------------
+-- TOP BAR
+----------------------------------------------------------------------
+local topBar = Instance.new("Frame")
+topBar.Name = "TopBar"
+topBar.Size = UDim2.new(1, 0, 0, 30)
+topBar.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+topBar.BorderSizePixel = 0
+topBar.Parent = mainFrame
+Instance.new("UICorner", topBar).CornerRadius = UDim.new(0, 8)
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Name = "TitleLabel"
+titleLabel.Size = UDim2.new(1, -140, 1, 0)
+titleLabel.Position = UDim2.new(0, 10, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Script Executor"
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 16
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.ZIndex = 10
+titleLabel.Parent = topBar
+
+local authorLabel = Instance.new("TextLabel")
+authorLabel.Size = UDim2.new(0, 200, 1, 0)
+authorLabel.Position = UDim2.new(1, -260, 0, 0)
+authorLabel.BackgroundTransparency = 1
+authorLabel.Text = "By Carsito82"
+authorLabel.Font = Enum.Font.Gotham
+authorLabel.TextSize = 12
+authorLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+authorLabel.TextXAlignment = Enum.TextXAlignment.Right
+authorLabel.ZIndex = 10
+authorLabel.Parent = topBar
+
+-- Botón de configuración
+local settingsButton = Instance.new("ImageButton")
+settingsButton.Name = "SettingsButton"
+settingsButton.Size = UDim2.new(0, 26, 0, 26)
+settingsButton.Position = UDim2.new(1, -105, 0, 2)
+settingsButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+settingsButton.BorderSizePixel = 0
+settingsButton.ZIndex = 20
+settingsButton.Image = "rbxassetid://3926305904" -- ícono genérico de engranaje
+settingsButton.ImageColor3 = Color3.fromRGB(255, 255, 255)
+settingsButton.Parent = topBar
+Instance.new("UICorner", settingsButton).CornerRadius = UDim.new(0, 6)
+
+-- Botón minimizar
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Name = "MinimizeButton"
+minimizeButton.Size = UDim2.new(0, 40, 1, 0)
+minimizeButton.Position = UDim2.new(1, -70, 0, 0)
+minimizeButton.BackgroundTransparency = 1
+minimizeButton.Text = "-"
+minimizeButton.Font = Enum.Font.GothamBold
+minimizeButton.TextSize = 24
+minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeButton.ZIndex = 10
+minimizeButton.Parent = topBar
+
+-- Botón cerrar
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0, 40, 1, 0)
+closeButton.Position = UDim2.new(1, -30, 0, 0)
+closeButton.BackgroundTransparency = 1
+closeButton.Text = "X"
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 18
+closeButton.TextColor3 = Color3.fromRGB(200, 60, 60)
+closeButton.ZIndex = 10
+closeButton.Parent = topBar
+
+----------------------------------------------------------------------
+-- CONTENEDORES: V1 / CONFIG / V2
+----------------------------------------------------------------------
+local v1Frame = Instance.new("Frame")
+v1Frame.Name = "V1Frame"
+v1Frame.Size = UDim2.new(1, 0, 1, -30)
+v1Frame.Position = UDim2.new(0, 0, 0, 30)
+v1Frame.BackgroundTransparency = 1
+v1Frame.ZIndex = 1
+v1Frame.Parent = mainFrame
+
+local configFrame = Instance.new("Frame")
+configFrame.Name = "ConfigFrame"
+configFrame.Size = UDim2.new(1, 0, 1, -30)
+configFrame.Position = UDim2.new(0, 0, 0, 30)
+configFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+configFrame.Visible = false
+configFrame.ZIndex = 1
+configFrame.Parent = mainFrame
+
+local v2Frame = Instance.new("Frame")
+v2Frame.Name = "V2Frame"
+v2Frame.Size = UDim2.new(1, 0, 1, -30)
+v2Frame.Position = UDim2.new(0, 0, 0, 30)
+v2Frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+v2Frame.Visible = false
+v2Frame.ZIndex = 1
+v2Frame.Parent = mainFrame
+
+----------------------------------------------------------------------
+-- ETIQUETA DE EFECTOS (HALLOWEEN / HACKER / NAVIDAD)
+----------------------------------------------------------------------
+local effectLabel = Instance.new("TextLabel")
+effectLabel.Name = "EffectLabel"
+effectLabel.Size = UDim2.new(1, 0, 0, 30)
+effectLabel.Position = UDim2.new(0, 0, 1, -30)
+effectLabel.BackgroundTransparency = 1
+effectLabel.Text = ""
+effectLabel.Font = Enum.Font.GothamBold
+effectLabel.TextSize = 18
+effectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+effectLabel.TextStrokeTransparency = 0.5
+effectLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+effectLabel.Visible = false
+effectLabel.Parent = mainFrame
+
+----------------------------------------------------------------------
+-- MODO V1: EXECUTOR NORMAL
+----------------------------------------------------------------------
+local scriptBox = Instance.new("TextBox")
+scriptBox.Name = "ScriptBox"
+scriptBox.Size = UDim2.new(1, -20, 0, 200)
+scriptBox.Position = UDim2.new(0, 10, 0, 10)
+scriptBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+scriptBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+scriptBox.Font = Enum.Font.Code
+scriptBox.TextSize = 16
+scriptBox.TextXAlignment = Enum.TextXAlignment.Left
+scriptBox.TextYAlignment = Enum.TextYAlignment.Top
+scriptBox.ClearTextOnFocus = false
+scriptBox.MultiLine = true
+scriptBox.Text = "-- Escribe tu script aquí"
+scriptBox.Parent = v1Frame
+
+local execButton = Instance.new("TextButton")
+execButton.Name = "ExecButton"
+execButton.Size = UDim2.new(0, 150, 0, 40)
+execButton.Position = UDim2.new(0, 10, 1, -50)
+execButton.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+execButton.Text = "Ejecutar"
+execButton.Font = Enum.Font.GothamBold
+execButton.TextSize = 16
+execButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+execButton.Parent = v1Frame
+
+local clearButton = Instance.new("TextButton")
+clearButton.Name = "ClearButton"
+clearButton.Size = UDim2.new(0, 150, 0, 40)
+clearButton.Position = UDim2.new(0, 170, 1, -50)
+clearButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+clearButton.Text = "Limpiar"
+clearButton.Font = Enum.Font.GothamBold
+clearButton.TextSize = 16
+clearButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+clearButton.Parent = v1Frame
+
+local iyButton = Instance.new("TextButton")
+iyButton.Name = "IYButton"
+iyButton.Size = UDim2.new(0, 150, 0, 40)
+iyButton.Position = UDim2.new(0, 330, 1, -50)
+iyButton.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+iyButton.Text = "Infinite Yield"
+iyButton.Font = Enum.Font.GothamBold
+iyButton.TextSize = 16
+iyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+iyButton.Parent = v1Frame
+
+----------------------------------------------------------------------
+-- MODO CONFIG: OPCIONES V1 / V2 + TEMAS
+----------------------------------------------------------------------
+
+-- (si ya existían de antes, evita duplicados)
+for _,n in ipairs({"ConfigTitle","ConfigScroll"}) do
+	local old = configFrame:FindFirstChild(n)
+	if old then old:Destroy() end
+end
+
+-- TÍTULO ARRIBA (NO SE TAPA)
+configTitle = Instance.new("TextLabel")
+configTitle.Name = "ConfigTitle"
+configTitle.Size = UDim2.new(1, 0, 0, 40)
+configTitle.Position = UDim2.new(0, 0, 0, 0)
+configTitle.BackgroundTransparency = 1
+configTitle.Text = "Configuración del Executor"
+configTitle.Font = Enum.Font.GothamBold
+configTitle.TextSize = 18
+configTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+configTitle.Parent = configFrame
+
+-- SCROLL ABAJO DEL TÍTULO
+local configScroll = Instance.new("ScrollingFrame")
+configScroll.Name = "ConfigScroll"
+configScroll.Size = UDim2.new(1, 0, 1, -40)
+configScroll.Position = UDim2.new(0, 0, 0, 40)
+configScroll.BackgroundTransparency = 1
+configScroll.BorderSizePixel = 0
+configScroll.ScrollBarThickness = 8
+configScroll.ScrollingDirection = Enum.ScrollingDirection.Y
+configScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+configScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+configScroll.Parent = configFrame
+
+local cfgPad = Instance.new("UIPadding")
+cfgPad.PaddingTop = UDim.new(0, 10)
+cfgPad.PaddingBottom = UDim.new(0, 10)
+cfgPad.PaddingLeft = UDim.new(0, 10)
+cfgPad.PaddingRight = UDim.new(0, 10)
+cfgPad.Parent = configScroll
+
+local cfgList = Instance.new("UIListLayout")
+cfgList.SortOrder = Enum.SortOrder.LayoutOrder
+cfgList.Padding = UDim.new(0, 10)
+cfgList.Parent = configScroll
+
+-- helpers
+local function mkButton(text, color, order)
+	local b = Instance.new("TextButton")
+	b.Size = UDim2.new(1, 0, 0, 40)
+	b.BackgroundColor3 = color
+	b.Text = text
+	b.Font = Enum.Font.GothamBold
+	b.TextSize = 16
+	b.TextColor3 = Color3.fromRGB(255,255,255)
+	b.BorderSizePixel = 0
+	b.AutoButtonColor = true
+	b.LayoutOrder = order
+	b.Parent = configScroll
+	Instance.new("UICorner", b).CornerRadius = UDim.new(0, 10)
+	return b
+end
+
+local function safeApplyTheme()
+	if typeof(applyTheme) == "function" then
+		applyTheme()
+	end
+	if typeof(applyThemeToScriptsPage) == "function" then
+		applyThemeToScriptsPage()
+	end
+end
+
+-- ====== MODO (V1 / V2) ======
+v1ModeButton = mkButton("Executor V1 (Normal)", Color3.fromRGB(40,40,40), 1)
+v2ModeButton = mkButton("Executor V2 (Hubs / Scripts)", Color3.fromRGB(0,122,255), 2)
+
+-- ====== TEMAS ======
+defaultThemeButton = mkButton("Tema Normal", Color3.fromRGB(60,60,60), 10)
+neonButton        = mkButton("Tema Neon Halloween 🎃", Color3.fromRGB(255,100,0), 11)
+hackerButton      = mkButton("Tema Hacker", Color3.fromRGB(0,160,0), 12)
+xmasButton        = mkButton("Tema Navidad 🎄", Color3.fromRGB(200,0,0), 13)
+
+-- ====== COUNTRYBALL (ABAJO DE NAVIDAD) ======
+local countryballHeader = mkButton("Tema Countryball 🌍", Color3.fromRGB(0,90,150), 14)
+
+local countryChoices = Instance.new("Frame")
+countryChoices.Name = "CountryChoices"
+countryChoices.Size = UDim2.new(1, 0, 0, 0) -- cerrado
+countryChoices.BackgroundColor3 = Color3.fromRGB(20,20,20)
+countryChoices.BorderSizePixel = 0
+countryChoices.ClipsDescendants = true
+countryChoices.LayoutOrder = 15
+countryChoices.Parent = configScroll
+Instance.new("UICorner", countryChoices).CornerRadius = UDim.new(0, 10)
+
+local ccPad = Instance.new("UIPadding")
+ccPad.PaddingTop = UDim.new(0, 8)
+ccPad.PaddingBottom = UDim.new(0, 8)
+ccPad.PaddingLeft = UDim.new(0, 8)
+ccPad.PaddingRight = UDim.new(0, 8)
+ccPad.Parent = countryChoices
+
+local ccList = Instance.new("UIListLayout")
+ccList.SortOrder = Enum.SortOrder.LayoutOrder
+ccList.Padding = UDim.new(0, 8)
+ccList.Parent = countryChoices
+
+local function makeCountryRow(labelText, assetId, accentColor, order)
+	local row = Instance.new("Frame")
+	row.Size = UDim2.new(1, 0, 0, 44)
+	row.BackgroundColor3 = Color3.fromRGB(30,30,30)
+	row.BorderSizePixel = 0
+	row.LayoutOrder = order
+	row.Parent = countryChoices
+	Instance.new("UICorner", row).CornerRadius = UDim.new(0, 8)
+
+	local icon = Instance.new("ImageLabel")
+	icon.Size = UDim2.new(0, 34, 0, 34)
+	icon.Position = UDim2.new(0, 6, 0.5, -17)
+	icon.BackgroundTransparency = 1
+	icon.Image = "rbxassetid://" .. tostring(assetId)
+	icon.Parent = row
+
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, -50, 1, 0)
+	btn.Position = UDim2.new(0, 46, 0, 0)
+	btn.BackgroundColor3 = accentColor
+	btn.BorderSizePixel = 0
+	btn.Text = labelText
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 14
+	btn.TextColor3 = Color3.fromRGB(255,255,255)
+	btn.LayoutOrder = order
+	btn.Parent = row
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+
+	return btn
+end
+
+-- botones countryball (con imagen)
+colombiaBtn = makeCountryRow("Colombia 🇨🇴", 11298949653, Color3.fromRGB(255,200,0), 1)
+usaBtn      = makeCountryRow("Estados Unidos 🇺🇸", 7100833860, Color3.fromRGB(60,80,255), 2)
+chileBtn    = makeCountryRow("Chile 🇨🇱", 91603351566068, Color3.fromRGB(200,0,0), 3)
+
+local opened = false
+countryballHeader.MouseButton1Click:Connect(function()
+	opened = not opened
+	countryChoices.Size = opened and UDim2.new(1,0,0,160) or UDim2.new(1,0,0,0)
+end)
+
+-- ====== MODO MOBILE (toggle) ======
+if isMobileMode == nil then isMobileMode = false end
+local mobileBtn = mkButton("Modo Mobile: OFF", Color3.fromRGB(35,35,35), 20)
+
+local function applyMobile()
+	if isMobileMode then
+		mainFrame.Size = UDim2.new(0, 380, 0, 420)
+		mainFrame.Position = UDim2.new(0.5, -190, 0.5, -210)
+		mobileBtn.Text = "Modo Mobile: ON"
+	else
+		mainFrame.Size = UDim2.new(0, 520, 0, 320)
+		mainFrame.Position = UDim2.new(0.5, -260, 0.5, -160)
+		mobileBtn.Text = "Modo Mobile: OFF"
+	end
+end
+applyMobile()
+
+mobileBtn.MouseButton1Click:Connect(function()
+	isMobileMode = not isMobileMode
+	applyMobile()
+end)
+
+-- ====== EVENTOS (solo config) ======
+defaultThemeButton.MouseButton1Click:Connect(function()
+	currentTheme = "default"
+	safeApplyTheme()
+end)
+
+neonButton.MouseButton1Click:Connect(function()
+	currentTheme = "neon"
+	safeApplyTheme()
+end)
+
+hackerButton.MouseButton1Click:Connect(function()
+	currentTheme = "hacker"
+	safeApplyTheme()
+end)
+
+xmasButton.MouseButton1Click:Connect(function()
+	currentTheme = "xmas"
+	safeApplyTheme()
+end)
+
+local function setCountryballTheme(assetId, label)
+	currentTheme = "countryball"
+	currentCountryballId = assetId
+
+	-- si tienes tu función ApplyCountryball / EnsureThemeImages, úsala
+	if typeof(ApplyCountryball) == "function" then
+		ApplyCountryball(assetId, label)
+	else
+		-- fallback: intenta setear imágenes si existen por nombre
+		local tl = mainFrame:FindFirstChild("ThemeImgTL")
+		local br = mainFrame:FindFirstChild("ThemeImgBR")
+		local img = "rbxassetid://" .. tostring(assetId)
+		if tl and tl:IsA("ImageLabel") then tl.Image = img; tl.Visible = true end
+		if br and br:IsA("ImageLabel") then br.Image = img; br.Visible = true end
+	end
+
+	safeApplyTheme()
+	countryChoices.Size = UDim2.new(1,0,0,0)
+	opened = false
+end
+
+colombiaBtn.MouseButton1Click:Connect(function()
+	setCountryballTheme(11298949653, "Countryball Colombia 🇨🇴")
+end)
+
+usaBtn.MouseButton1Click:Connect(function()
+	setCountryballTheme(7100833860, "Countryball USA 🇺🇸")
+end)
+
+chileBtn.MouseButton1Click:Connect(function()
+	setCountryballTheme(91603351566068, "Countryball Chile 🇨🇱")
+end)
+
+
+----------------------------------------------------------------------
+-- MODO V2: Hubs + Scripts (con páginas)
+----------------------------------------------------------------------
+local tabsFrame = Instance.new("Frame")
+tabsFrame.Size = UDim2.new(1, 0, 0, 40)
+tabsFrame.Position = UDim2.new(0, 0, 0, 0)
+tabsFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+tabsFrame.Parent = v2Frame
+
+local hubsTab = Instance.new("TextButton")
+hubsTab.Size = UDim2.new(0, 100, 1, 0)
+hubsTab.Position = UDim2.new(0, 10, 0, 0)
+hubsTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+hubsTab.Text = "Hubs"
+hubsTab.Font = Enum.Font.GothamBold
+hubsTab.TextSize = 14
+hubsTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+hubsTab.Parent = tabsFrame
+
+local scriptsTab = Instance.new("TextButton")
+scriptsTab.Size = UDim2.new(0, 100, 1, 0)
+scriptsTab.Position = UDim2.new(0, 120, 0, 0)
+scriptsTab.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+scriptsTab.Text = "Scripts"
+scriptsTab.Font = Enum.Font.GothamBold
+scriptsTab.TextSize = 14
+scriptsTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+scriptsTab.Parent = tabsFrame
+
+local hubsPage = Instance.new("Frame")
+hubsPage.Size = UDim2.new(1, 0, 1, -40)
+hubsPage.Position = UDim2.new(0, 0, 0, 40)
+hubsPage.BackgroundTransparency = 1
+hubsPage.Parent = v2Frame
+
+local scriptsPage = Instance.new("Frame")
+scriptsPage.Size = UDim2.new(1, 0, 1, -40)
+scriptsPage.Position = UDim2.new(0, 0, 0, 40)
+scriptsPage.BackgroundTransparency = 1
+scriptsPage.Visible = false
+scriptsPage.Parent = v2Frame
+
+-- Hubs (XBC)
+local xbcButton = Instance.new("TextButton")
+xbcButton.Size = UDim2.new(0, 220, 0, 50)
+xbcButton.Position = UDim2.new(0.5, -110, 0.25, 0)
+xbcButton.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+xbcButton.Text = "XBC Hub"
+xbcButton.Font = Enum.Font.GothamBold
+xbcButton.TextSize = 20
+xbcButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+xbcButton.Parent = hubsPage
+
+----------------------------------------------------------------------
+-- LISTA DE SCRIPTS (PAGINADO, 3 PÁGINAS CON 9 SCRIPTS)
+----------------------------------------------------------------------
+local scriptsList = {
+    -- PÁGINA 1 (1–4)
+    {
+        Name = "Hitbox Expander",
+        Url  = "https://pastefy.app/NRTc0U0b/raw"
+    },
+    {
+        Name = "Nameless Admin",
+        Url  = "https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source"
+    },
+    {
+        Name = "Cao Mod",
+        Url  = "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/FoxnameHub.lua"
+    },
+    {
+        Name = "Blue cans script",
+        Url  = "https://pastefy.app/KfGCZFxk/raw"
+    },
+
+    -- PÁGINA 2 (5–8)
+    {
+        Name = "GhostHub",
+        Url  = "https://pastefy.app/r3cOe5ks/raw"
+    },
+    {
+        Name = "99 Nights",
+        Url  = "https://raw.githubusercontent.com/m00ndiety/99-nights-in-the-forest/refs/heads/main/Main"
+    },
+    {
+        Name = "TSB",
+        Url  = "https://raw.githubusercontent.com/darkdexv2/oreotechbythirst/refs/heads/main/oreofreetsb"
+    },
+    {
+        Name = "CombatS",
+        Url  = "https://pastebin.com/raw/wTf6tm5U"
+    },
+
+    -- PÁGINA 3 (9–12)
+    {
+        Name = "Youtube",
+        Url  = "https://raw.githubusercontent.com/Dan41/Roblox-Scripts/refs/heads/main/Youtube%20Music%20Player/YoutubeMusicPlayer.lua"
+    },
+    {
+        Name = "Tp Panel",
+        Url  = "https://raw.githubusercontent.com/Nathaly-bit/Tp-Panel/refs/heads/main/Tp%20panel.lua"
+    },
+    {
+        Name = "Time Recorder",
+        Url  = "https://raw.githubusercontent.com/Nathaly-bit/Time-Record/refs/heads/main/TimeRecorder.lua"
+    },
+    {
+        Name = "Fly Gui",
+        Url  = "https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"
+    },
+
+    -- PÁGINA 4 (13–16) — LISTA PARA QUE AGREGUES MÁS SCRIPTS
+    {
+        Name = "Spider Script",
+        Url  = "https://abre.ai/spider-lua"
+    },
+    {
+        Name = "Troll Gui",
+        Url  = "https://pastefy.app/rmdi1m55/raw"
+    },
+    {
+        Name = "Dex",
+        Url  = "https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/refs/heads/main/dex.lua"
+    },
+    {
+        Name = "ZYPHERION Script",
+        Url  = "https://raw.githubusercontent.com/blackowl1231/ZYPHERION/refs/heads/main/main.lua"
+    }
+}
+
+local scriptsPerPage = 4
+local currentScriptPage = 1
+
+local function getTotalPages()
+    return math.max(1, math.ceil(#scriptsList / scriptsPerPage))
+end
+
+local function clearScriptPageUI()
+    for _, child in ipairs(scriptsPage:GetChildren()) do
+        if child:IsA("TextButton") and (child.Name == "ScriptButton" or child.Name == "PrevPageButton" or child.Name == "NextPageButton") then
+            child:Destroy()
+        elseif child:IsA("TextLabel") and child.Name == "PageLabel" then
+            child:Destroy()
+        end
+    end
+end
+
+local function createScriptsPage()
+    clearScriptPageUI()
+
+    local totalPages = getTotalPages()
+    if currentScriptPage > totalPages then
+        currentScriptPage = totalPages
+    end
+
+    local startIndex = (currentScriptPage - 1) * scriptsPerPage + 1
+    local endIndex = math.min(#scriptsList, currentScriptPage * scriptsPerPage)
+    local row = 0
+
+    for i = startIndex, endIndex do
+        local data = scriptsList[i]
+        local btn = Instance.new("TextButton")
+        btn.Name = "ScriptButton"
+        btn.Size = UDim2.new(0, 260, 0, 40)
+        btn.Position = UDim2.new(0.5, -130, 0, 20 + row * 50)
+        btn.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+        btn.Text = data.Name
+        btn.Font = Enum.Font.GothamBold
+        btn.TextSize = 18
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.Parent = scriptsPage
+
+        btn.MouseButton1Click:Connect(function()
+            pcall(function()
+                loadstring(game:HttpGet(data.Url))()
+            end)
+        end)
+
+        row += 1
+    end
+
+    local pageLabel = Instance.new("TextLabel")
+    pageLabel.Name = "PageLabel"
+    pageLabel.Size = UDim2.new(0, 120, 0, 30)
+    pageLabel.Position = UDim2.new(0.5, -60, 1, -40)
+    pageLabel.BackgroundTransparency = 1
+    pageLabel.Text = "Página " .. currentScriptPage .. "/" .. totalPages
+    pageLabel.Font = Enum.Font.GothamBold
+    pageLabel.TextSize = 14
+    pageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    pageLabel.Parent = scriptsPage
+
+    local prevButton = Instance.new("TextButton")
+    prevButton.Name = "PrevPageButton"
+    prevButton.Size = UDim2.new(0, 60, 0, 30)
+    prevButton.Position = UDim2.new(0.5, -130, 1, -40)
+    prevButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    prevButton.Text = "<"
+    prevButton.Font = Enum.Font.GothamBold
+    prevButton.TextSize = 18
+    prevButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    prevButton.Parent = scriptsPage
+
+    local nextButton = Instance.new("TextButton")
+    nextButton.Name = "NextPageButton"
+    nextButton.Size = UDim2.new(0, 60, 0, 30)
+    nextButton.Position = UDim2.new(0.5, 70, 1, -40)
+    nextButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    nextButton.Text = ">"
+    nextButton.Font = Enum.Font.GothamBold
+    nextButton.TextSize = 18
+    nextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nextButton.Parent = scriptsPage
+
+    prevButton.MouseButton1Click:Connect(function()
+        if currentScriptPage > 1 then
+            currentScriptPage -= 1
+            createScriptsPage()
+        end
+    end)
+
+    nextButton.MouseButton1Click:Connect(function()
+        if currentScriptPage < getTotalPages() then
+            currentScriptPage += 1
+            createScriptsPage()
+        end
+    end)
+end
+
+----------------------------------------------------------------------
+-- KEY SYSTEM
+----------------------------------------------------------------------
+local correctKey = "Amoloscountryballs"
+local keyUrl = "https://direct-link.net/1450601/3bwXQmUQjMwG"
+
+local keyOverlay = Instance.new("Frame")
+keyOverlay.Name = "KeyOverlay"
+keyOverlay.Size = UDim2.new(1, 0, 1, 0)
+keyOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+keyOverlay.BackgroundTransparency = 0.35
+keyOverlay.ZIndex = 60
+keyOverlay.Parent = screenGui
+
+local keyFrame = Instance.new("Frame")
+keyFrame.Size = UDim2.new(0, 420, 0, 230)
+keyFrame.Position = UDim2.new(0.5, -210, 0.5, -115)
+keyFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+keyFrame.BorderSizePixel = 0
+keyFrame.ZIndex = 61
+keyFrame.Parent = keyOverlay
+Instance.new("UICorner", keyFrame).CornerRadius = UDim.new(0, 10)
+
+local keyTitle = Instance.new("TextLabel")
+keyTitle.Size = UDim2.new(1, 0, 0, 40)
+keyTitle.Position = UDim2.new(0, 0, 0, 10)
+keyTitle.BackgroundTransparency = 1
+keyTitle.Text = "Key System - Carsito82"
+keyTitle.Font = Enum.Font.GothamBold
+keyTitle.TextSize = 20
+keyTitle.TextColor3 = Color3.fromRGB(0, 255, 200)
+keyTitle.ZIndex = 62
+keyTitle.Parent = keyFrame
+
+local keyInfo = Instance.new("TextLabel")
+keyInfo.Size = UDim2.new(1, -20, 0, 40)
+keyInfo.Position = UDim2.new(0, 10, 0, 50)
+keyInfo.BackgroundTransparency = 1
+keyInfo.TextWrapped = true
+keyInfo.Text = "Obtén la key desde la página, cópiala y pégala aquí para desbloquear el executor."
+keyInfo.Font = Enum.Font.Gotham
+keyInfo.TextSize = 14
+keyInfo.TextColor3 = Color3.fromRGB(220, 220, 220)
+keyInfo.ZIndex = 62
+keyInfo.Parent = keyFrame
+
+local keyBox = Instance.new("TextBox")
+keyBox.Size = UDim2.new(1, -20, 0, 34)
+keyBox.Position = UDim2.new(0, 10, 0, 100)
+keyBox.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyBox.Font = Enum.Font.Gotham
+keyBox.TextSize = 16
+keyBox.PlaceholderText = "Ingresa tu key aquí"
+keyBox.ClearTextOnFocus = false
+keyBox.ZIndex = 62
+keyBox.Parent = keyFrame
+Instance.new("UICorner", keyBox).CornerRadius = UDim.new(0, 8)
+
+local verifyKeyButton = Instance.new("TextButton")
+verifyKeyButton.Size = UDim2.new(0.5, -15, 0, 40)
+verifyKeyButton.Position = UDim2.new(0, 10, 0, 150)
+verifyKeyButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+verifyKeyButton.Text = "Verificar Key"
+verifyKeyButton.Font = Enum.Font.GothamBold
+verifyKeyButton.TextSize = 16
+verifyKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+verifyKeyButton.ZIndex = 62
+verifyKeyButton.Parent = keyFrame
+Instance.new("UICorner", verifyKeyButton).CornerRadius = UDim.new(0, 8)
+
+local copyKeyButton = Instance.new("TextButton")
+copyKeyButton.Size = UDim2.new(0.5, -15, 0, 40)
+copyKeyButton.Position = UDim2.new(0.5, 5, 0, 150)
+copyKeyButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+copyKeyButton.Text = "Copy Key System"
+copyKeyButton.Font = Enum.Font.GothamBold
+copyKeyButton.TextSize = 16
+copyKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyKeyButton.ZIndex = 62
+copyKeyButton.Parent = keyFrame
+Instance.new("UICorner", copyKeyButton).CornerRadius = UDim.new(0, 8)
+
+local keyUrlLabel = Instance.new("TextLabel")
+keyUrlLabel.Size = UDim2.new(1, -20, 0, 20)
+keyUrlLabel.Position = UDim2.new(0, 10, 1, -28)
+keyUrlLabel.BackgroundTransparency = 1
+keyUrlLabel.TextXAlignment = Enum.TextXAlignment.Center
+keyUrlLabel.Text = "direct-link.net (copiado al usar el botón)"
+keyUrlLabel.Font = Enum.Font.Gotham
+keyUrlLabel.TextSize = 12
+keyUrlLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+keyUrlLabel.ZIndex = 62
+keyUrlLabel.Parent = keyFrame
+
+-- Al inicio: executor bloqueado
+mainFrame.Visible = false
+miniButton.Visible = false
+
+copyKeyButton.MouseButton1Click:Connect(function()
+    if setclipboard then
+        setclipboard(keyUrl)
+    end
+end)
+
+verifyKeyButton.MouseButton1Click:Connect(function()
+    if keyBox.Text == correctKey then
+        keyOverlay:Destroy()
+        mainFrame.Visible = true
+        miniButton.Visible = false
+    else
+        keyBox.Text = ""
+        keyBox.PlaceholderText = "Key incorrecta, inténtalo de nuevo"
+    end
+end)
+
+----------------------------------------------------------------------
+-- TEMA / MODO
+----------------------------------------------------------------------
+local currentMode = "V1"
+local currentTheme = "default" -- "default", "neon", "hacker", "xmas"
+
+local function applyThemeToScriptsPage()
+    for _, child in ipairs(scriptsPage:GetChildren()) do
+        if child:IsA("TextButton") then
+            if child.Name == "ScriptButton" then
+                if currentTheme == "default" then
+                    child.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+                elseif currentTheme == "neon" then
+                    child.BackgroundColor3 = Color3.fromRGB(255, 120, 0)
+                elseif currentTheme == "hacker" then
+                    child.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+                elseif currentTheme == "xmas" then
+                    child.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+                end
+                child.TextColor3 = Color3.fromRGB(255, 255, 255)
+            elseif child.Name == "PrevPageButton" or child.Name == "NextPageButton" then
+                if currentTheme == "default" then
+                    child.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                elseif currentTheme == "neon" then
+                    child.BackgroundColor3 = Color3.fromRGB(80, 0, 120)
+                elseif currentTheme == "hacker" then
+                    child.BackgroundColor3 = Color3.fromRGB(0, 60, 0)
+                elseif currentTheme == "xmas" then
+                    child.BackgroundColor3 = Color3.fromRGB(130, 0, 0)
+                end
+                child.TextColor3 = Color3.fromRGB(255, 255, 255)
+            end
+        elseif child:IsA("TextLabel") and child.Name == "PageLabel" then
+            if currentTheme == "default" then
+                child.TextColor3 = Color3.fromRGB(255, 255, 255)
+            elseif currentTheme == "neon" then
+                child.TextColor3 = Color3.fromRGB(255, 170, 0)
+            elseif currentTheme == "hacker" then
+                child.TextColor3 = Color3.fromRGB(0, 255, 0)
+            elseif currentTheme == "xmas" then
+                child.TextColor3 = Color3.fromRGB(255, 230, 200)
+            end
+        end
+    end
+end
+
+local function setMode(mode)
+    currentMode = mode
+
+    if mode == "V1" then
+        v1Frame.Visible = true
+        configFrame.Visible = false
+        v2Frame.Visible = false
+        titleLabel.Text = "Script Executor"
+    elseif mode == "CONFIG" then
+        v1Frame.Visible = false
+        configFrame.Visible = true
+        v2Frame.Visible = false
+        titleLabel.Text = "Configuración"
+    elseif mode == "V2" then
+        v1Frame.Visible = false
+        configFrame.Visible = false
+        v2Frame.Visible = true
+        titleLabel.Text = "Executor V2"
+        createScriptsPage()
+        applyThemeToScriptsPage()
+    end
+end
+
+local function applyTheme()
+    if currentTheme == "default" then
+        mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        topBar.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+        titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        authorLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+        miniButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        miniButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        settingsButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        settingsButton.ImageColor3 = Color3.fromRGB(255, 255, 255)
+
+        scriptBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        scriptBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        execButton.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+        clearButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        iyButton.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+
+        configFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        configTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        v1ModeButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        v2ModeButton.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+        defaultThemeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        neonButton.BackgroundColor3 = Color3.fromRGB(255, 100, 0)
+        hackerButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+        xmasButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+
+        v2Frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+        tabsFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+        hubsTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        scriptsTab.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        xbcButton.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+
+        effectLabel.Visible = false
+
+    elseif currentTheme == "neon" then
+        mainFrame.BackgroundColor3 = Color3.fromRGB(5, 0, 20)
+        topBar.BackgroundColor3 = Color3.fromRGB(10, 0, 30)
+        titleLabel.TextColor3 = Color3.fromRGB(0, 255, 200)
+        authorLabel.TextColor3 = Color3.fromRGB(200, 150, 255)
+        miniButton.BackgroundColor3 = Color3.fromRGB(10, 0, 25)
+        miniButton.TextColor3 = Color3.fromRGB(0, 255, 200)
+        settingsButton.BackgroundColor3 = Color3.fromRGB(30, 0, 40)
+        settingsButton.ImageColor3 = Color3.fromRGB(0, 255, 200)
+
+        scriptBox.BackgroundColor3 = Color3.fromRGB(10, 0, 25)
+        scriptBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        execButton.BackgroundColor3 = Color3.fromRGB(0, 255, 200)
+        clearButton.BackgroundColor3 = Color3.fromRGB(180, 70, 255)
+        iyButton.BackgroundColor3 = Color3.fromRGB(255, 120, 0)
+
+        configFrame.BackgroundColor3 = Color3.fromRGB(15, 0, 35)
+        configTitle.TextColor3 = Color3.fromRGB(255, 170, 0)
+        v1ModeButton.BackgroundColor3 = Color3.fromRGB(80, 20, 140)
+        v2ModeButton.BackgroundColor3 = Color3.fromRGB(0, 220, 180)
+        defaultThemeButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+        neonButton.BackgroundColor3 = Color3.fromRGB(255, 120, 0)
+        hackerButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+        xmasButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+
+        v2Frame.BackgroundColor3 = Color3.fromRGB(10, 0, 30)
+        tabsFrame.BackgroundColor3 = Color3.fromRGB(15, 0, 40)
+        hubsTab.BackgroundColor3 = Color3.fromRGB(0, 220, 180)
+        scriptsTab.BackgroundColor3 = Color3.fromRGB(180, 70, 255)
+        xbcButton.BackgroundColor3 = Color3.fromRGB(0, 255, 200)
+
+        effectLabel.Visible = true
+        effectLabel.Text = "🎃 HALLOWEEN NEON MODE 🎃"
+        effectLabel.TextStrokeColor3 = Color3.fromRGB(80, 0, 120)
+
+    elseif currentTheme == "hacker" then
+        mainFrame.BackgroundColor3 = Color3.fromRGB(0, 5, 0)
+        topBar.BackgroundColor3 = Color3.fromRGB(0, 15, 0)
+        titleLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        authorLabel.TextColor3 = Color3.fromRGB(0, 200, 0)
+        miniButton.BackgroundColor3 = Color3.fromRGB(0, 20, 0)
+        miniButton.TextColor3 = Color3.fromRGB(0, 255, 0)
+        settingsButton.BackgroundColor3 = Color3.fromRGB(0, 30, 0)
+        settingsButton.ImageColor3 = Color3.fromRGB(0, 255, 0)
+
+        scriptBox.BackgroundColor3 = Color3.fromRGB(0, 10, 0)
+        scriptBox.TextColor3 = Color3.fromRGB(0, 255, 0)
+        execButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+        clearButton.BackgroundColor3 = Color3.fromRGB(0, 90, 0)
+        iyButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+
+        configFrame.BackgroundColor3 = Color3.fromRGB(0, 15, 0)
+        configTitle.TextColor3 = Color3.fromRGB(0, 255, 0)
+        v1ModeButton.BackgroundColor3 = Color3.fromRGB(0, 60, 0)
+        v2ModeButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+        defaultThemeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        neonButton.BackgroundColor3 = Color3.fromRGB(255, 120, 0)
+        hackerButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        xmasButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+
+        v2Frame.BackgroundColor3 = Color3.fromRGB(0, 10, 0)
+        tabsFrame.BackgroundColor3 = Color3.fromRGB(0, 20, 0)
+        hubsTab.BackgroundColor3 = Color3.fromRGB(0, 120, 0)
+        scriptsTab.BackgroundColor3 = Color3.fromRGB(0, 80, 0)
+        xbcButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+
+        effectLabel.Visible = true
+        effectLabel.Text = "HACKING..."
+        effectLabel.TextStrokeColor3 = Color3.fromRGB(0, 40, 0)
+
+    elseif currentTheme == "xmas" then
+        mainFrame.BackgroundColor3 = Color3.fromRGB(15, 0, 0)
+        topBar.BackgroundColor3 = Color3.fromRGB(40, 0, 0)
+        titleLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        authorLabel.TextColor3 = Color3.fromRGB(255, 220, 200)
+        miniButton.BackgroundColor3 = Color3.fromRGB(50, 0, 0)
+        miniButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        settingsButton.BackgroundColor3 = Color3.fromRGB(80, 0, 0)
+        settingsButton.ImageColor3 = Color3.fromRGB(0, 255, 0)
+
+        scriptBox.BackgroundColor3 = Color3.fromRGB(30, 0, 0)
+        scriptBox.TextColor3 = Color3.fromRGB(255, 230, 230)
+        execButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+        clearButton.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+        iyButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+
+        configFrame.BackgroundColor3 = Color3.fromRGB(40, 0, 0)
+        configTitle.TextColor3 = Color3.fromRGB(255, 230, 200)
+        v1ModeButton.BackgroundColor3 = Color3.fromRGB(130, 0, 0)
+        v2ModeButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+        defaultThemeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        neonButton.BackgroundColor3 = Color3.fromRGB(255, 120, 0)
+        hackerButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+        xmasButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+
+        v2Frame.BackgroundColor3 = Color3.fromRGB(25, 0, 0)
+        tabsFrame.BackgroundColor3 = Color3.fromRGB(60, 0, 0)
+        hubsTab.BackgroundColor3 = Color3.fromRGB(0, 140, 0)
+        scriptsTab.BackgroundColor3 = Color3.fromRGB(140, 0, 0)
+        xbcButton.BackgroundColor3 = Color3.fromRGB(0, 160, 0)
+
+        effectLabel.Visible = true
+        effectLabel.Text = "🎄 MODO NAVIDAD 🎄"
+        effectLabel.TextStrokeColor3 = Color3.fromRGB(0, 60, 0)
+    end
+
+    applyThemeToScriptsPage()
+end
+
+setMode("V1")
+applyTheme()
+
+----------------------------------------------------------------------
+-- EVENTOS: CONFIG (CAMBIO DE MODO)
+----------------------------------------------------------------------
+settingsButton.MouseButton1Click:Connect(function()
+    setMode("CONFIG")
+end)
+
+v1ModeButton.MouseButton1Click:Connect(function()
+    setMode("V1")
+end)
+
+v2ModeButton.MouseButton1Click:Connect(function()
+    setMode("V2")
+end)
+
+----------------------------------------------------------------------
+-- EVENTOS: TABS V2
+----------------------------------------------------------------------
+hubsTab.MouseButton1Click:Connect(function()
+    hubsPage.Visible = true
+    scriptsPage.Visible = false
+    hubsTab.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    scriptsTab.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+end)
+
+scriptsTab.MouseButton1Click:Connect(function()
+    hubsPage.Visible = false
+    scriptsPage.Visible = true
+    scriptsTab.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    hubsTab.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    createScriptsPage()
+    applyThemeToScriptsPage()
+end)
+
+----------------------------------------------------------------------
+-- FUNCIONALIDAD V1
+----------------------------------------------------------------------
+execButton.MouseButton1Click:Connect(function()
+    local code = scriptBox.Text
+    if code and code ~= "" then
+        local f, err = loadstring(code)
+        if not f then
+            warn("Error en script:", err)
+            return
+        end
+        pcall(f)
+    end
+end)
+
+clearButton.MouseButton1Click:Connect(function()
+    scriptBox.Text = ""
+end)
+
+iyButton.MouseButton1Click:Connect(function()
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    end)
+end)
+
+----------------------------------------------------------------------
+-- FUNCIONALIDAD V2: Hubs
+----------------------------------------------------------------------
+xbcButton.MouseButton1Click:Connect(function()
+    pcall(function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/Piw5bqGq"))()
+    end)
+end)
+
+----------------------------------------------------------------------
+-- TEMAS: BOTONES
+----------------------------------------------------------------------
+defaultThemeButton.MouseButton1Click:Connect(function()
+    currentTheme = "default"
+    applyTheme()
+end)
+
+neonButton.MouseButton1Click:Connect(function()
+    currentTheme = "neon"
+    applyTheme()
+end)
+
+hackerButton.MouseButton1Click:Connect(function()
+    currentTheme = "hacker"
+    applyTheme()
+end)
+
+xmasButton.MouseButton1Click:Connect(function()
+    currentTheme = "xmas"
+    applyTheme()
+end)
+
+----------------------------------------------------------------------
+-- ANIMACIÓN DEL TEXTO DE EFECTO
+----------------------------------------------------------------------
+RunService.RenderStepped:Connect(function()
+    if not effectLabel.Visible then return end
+    local t = tick()
+
+    if currentTheme == "hacker" then
+        effectLabel.Rotation = math.sin(t * 5) * 5
+        local g = 180 + math.floor(75 * math.abs(math.sin(t * 3)))
+        effectLabel.TextColor3 = Color3.fromRGB(0, g, 0)
+
+    elseif currentTheme == "neon" then
+        local pulso = 0.5 + 0.5 * math.sin(t * 2)
+        local r = 200 + math.floor(55 * pulso)
+        effectLabel.TextColor3 = Color3.fromRGB(r, 140, 0)
+        effectLabel.Rotation = 0
+
+    elseif currentTheme == "xmas" then
+        local pulso = 0.5 + 0.5 * math.sin(t * 2)
+        local r = 180 + math.floor(75 * pulso)
+        local g = 180 + math.floor(75 * math.cos(t * 2))
+        effectLabel.TextColor3 = Color3.fromRGB(r, g, 0)
+        effectLabel.Rotation = math.sin(t * 2) * 3
+    else
+        effectLabel.Rotation = 0
+    end
+end)
+
+----------------------------------------------------------------------
+-- MINIMIZAR / CERRAR
+----------------------------------------------------------------------
+minimizeButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    miniButton.Visible = true
+end)
+
+miniButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = true
+    miniButton.Visible = false
+end)
+
+closeButton.MouseButton1Click:Connect(function()
+    screenGui.Enabled = false
+end)
+
+----------------------------------------------------------------------
+-- DRAGGABLE
+----------------------------------------------------------------------
+local dragging = false
+local dragStart
+local startPos
+
+topBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+    end
+end)
+
+topBar.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
